@@ -1,6 +1,7 @@
 package com.xxo.mr;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -41,7 +42,10 @@ public class WordCountApp {
         job.setOutputValueClass(LongWritable.class);
 
         //4. 数据写入
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        Path outputPath = new Path(args[1]);
+        final FileSystem fileSystem = outputPath.getFileSystem(conf);
+        fileSystem.delete(outputPath, true);
+        FileOutputFormat.setOutputPath(job, outputPath);
 
         //5. 执行
         job.waitForCompletion(true) ;
